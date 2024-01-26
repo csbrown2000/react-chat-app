@@ -1,9 +1,45 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-# id: the id of the user (string)
-# created_at: the datetime the user was created in ISO format (string of the form yyyy-mm-ddThh:mm:ss)
+from meta import MetaData
+
 class User(BaseModel):
+	"""
+	Represents a user in the system.
+
+	Attributes:
+		id (str): The unique identifier for the user.
+		created_at (datetime): The timestamp when the user was created.
+	"""
 	id: str
 	created_at: datetime
 
+class UserCollection(BaseModel):
+	"""
+	Represents a collection of users.
+
+	Attributes:
+		count (MetaData): The metadata about the count of users.
+		user (list[User]): The list of User objects.
+	"""
+	meta: MetaData
+	user: list[User]
+
+class UserCreate(BaseModel):
+	"""
+	Represents a user creation model.
+
+	Attributes:
+		id (str): The ID of the user.
+	"""
+	id: str
+
+
+class UserResponse(BaseModel):
+	"""
+	Represents a response containing a user object.
+	
+	Attributes:
+		user (User): The user object.
+	"""
+	user: User
