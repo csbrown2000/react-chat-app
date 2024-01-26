@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-from meta import MetaData
+from backend.models.meta import MetaData
 
 class Chat(BaseModel):
 	"""

@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
 
-from meta import MetaData
+from backend.models.meta import MetaData
 
 class User(BaseModel):
 	"""
@@ -23,7 +23,7 @@ class UserCollection(BaseModel):
 		user (list[User]): The list of User objects.
 	"""
 	meta: MetaData
-	user: list[User]
+	users: list[User]
 
 class UserCreate(BaseModel):
 	"""
