@@ -12,3 +12,5 @@ def test_get_all_users():
 
 	assert meta["count"] == len(users)
 	assert  users == sorted(users, key=lambda user: user["id"])
+
+	
