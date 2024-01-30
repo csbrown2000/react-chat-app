@@ -102,3 +102,9 @@ def test_update_terminators_chat_name():
 	assert "chat" in data
 	chat = data["chat"]
 	assert chat["name"] == expected_response
+
+def test_get_chat_users_invalid_id():
+	"""Test response for `GET /chats/invalid_id/users."""
+	test_client = TestClient(app)
+	invalid_id = "invalid_id"
+	response = test_client.get(f"/chats/{invalid_id}/users")

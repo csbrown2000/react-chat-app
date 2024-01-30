@@ -17,7 +17,9 @@ from backend.models.chat import(
 users_router = APIRouter(prefix="/users", tags=["Users"])
 
 
-@users_router.get("", response_model=UserCollection)
+@users_router.get("",
+				  response_model=UserCollection,
+				  description="Retrieve a collection of users from the database.")
 def get_users(
 	sort: Literal["id", "created_at"] = "id"
 ):
@@ -39,7 +41,9 @@ def get_users(
 	)
 
 
-@users_router.get("/{user_id}", response_model=UserResponse)
+@users_router.get("/{user_id}",
+				  response_model=UserResponse,
+				  description="Retrieve a user by their ID.")
 def get_user_by_id(user_id: str):
 	"""
 	Retrieve a user by their ID.
@@ -53,7 +57,9 @@ def get_user_by_id(user_id: str):
 	return UserResponse(user=db.get_user_by_id(user_id))
 
 
-@users_router.post("", response_model=UserResponse)
+@users_router.post("",
+				   response_model=UserResponse,
+				   description="Create a new user.")
 def create_user(user_create: UserCreate):
 	"""
 	Create a new user.
@@ -67,7 +73,9 @@ def create_user(user_create: UserCreate):
 	return UserResponse(user=db.create_user(user_create))
 
 
-@users_router.get("/{user_id}/chats", response_model=ChatCollection)
+@users_router.get("/{user_id}/chats",
+				  response_model=ChatCollection,
+				  description="Retrieve the chats for a specific user.")
 def get_user_chats(user_id: str, 
 				   sort: Literal["name", "id", "created_at"] = "name"):
 	"""
