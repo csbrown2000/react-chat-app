@@ -90,3 +90,8 @@ def test_get_sarah_chats():
 
 	assert meta["count"] == len(chats)
 	assert  chats == sorted(chats, key=lambda chat: chat["name"])
+
+def test_exception_on_bad_user_id():
+	client = TestClient(app)
+	response = client.get("/users/5eutygouih2345")
+	assert response.status_code == 404

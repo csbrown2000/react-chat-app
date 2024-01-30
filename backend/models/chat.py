@@ -39,3 +39,22 @@ class ChatResponse(BaseModel):
 		chat (Chat): The chat object associated with the response.
 	"""
 	chat: Chat
+
+class ChatUpdate(BaseModel):
+	"""
+	Represents an update for a chat.
+
+	Attributes:
+		name (str): The updated name of the chat.
+	"""
+	name: str
+
+class Message(BaseModel):
+	id: str
+	user_id: str
+	text: str
+	created_at: datetime
+
+class MessageCollection(BaseModel):
+	meta: MetaData
+	messages: list[Message]
