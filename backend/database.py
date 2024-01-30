@@ -151,6 +151,7 @@ def update_chat(chat_id: str, chat_update: ChatUpdate) -> Chat:
 	"""
 	chat = get_chat_by_id(chat_id)
 	setattr(chat, "name", chat_update.name)
+	DB["chats"][chat_id] = chat.model_dump()
 	return chat
 
 def delete_chat(chat_id: str):
