@@ -1,8 +1,8 @@
 import json
-from datetime import date
+from datetime import datetime
 from uuid import uuid4
 
-from backend.models.exception import EntityNotFoundException
+from backend.models.exception import EntityNotFoundException, DuplicateEntityException
 from backend.models.user import (
     User,
     UserResponse,
@@ -33,12 +33,16 @@ def get_user_by_id(user_id: str) -> User:
 
 
 def create_user(user_create: UserCreate) -> User:
-    user = User(
-		created_at=date.today(),
-        **user_create.model_dump()
-    )
-    DB["users"][user.id] = user.model_dump()
-    return user
+	if user_create.id in DB["users"]:
+		raise DuplicateEntityException(entity_name="User", entity_id=user_create.id)
+	else:
+		user = User(
+			created_at=datetime.now(),
+			**user_create.model_dump()
+		)
+		DB["users"][user.id] = user.model_dump()
+		return user
+		
 	
 
 def get_user_chats(user_id: str) -> list[Chat]:

@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from datetime import date
+import datetime
 from backend.main import app
 
 def test_get_all_users():
@@ -95,3 +95,32 @@ def test_exception_on_bad_user_id():
 	client = TestClient(app)
 	response = client.get("/users/5eutygouih2345")
 	assert response.status_code == 404
+
+def test_create_user_juniper():
+	test_client = TestClient(app)
+	"""Test response for `POST /users` with id: \"juniper\"."""
+	lower_bound = datetime.datetime.now()
+	upper_bound = lower_bound + datetime.timedelta(seconds=5)
+
+	response = test_client.post("/users", json={"id": "juniper"})
+	assert response.status_code == 200
+
+	data = response.json()
+	assert isinstance(data, dict)
+	assert "user" in data
+	user = data["user"]
+	assert isinstance(user, dict)
+	assert set(user.keys()) == {"id", "created_at"}
+	assert user["id"] == "juniper"
+
+	# test that created_at datetime is no more between 0 and 5 seconds
+	# after the http request
+	created_at = datetime.datetime.fromisoformat(user["created_at"])
+	assert lower_bound <= created_at <= upper_bound
+	# assert datetime.datetime(2024, 1, 30, 2, 45, 4, 523868) <= datetime.datetime(2024, 1, 30, 0, 0)
+
+def test_create_user_invalid_id():
+	"""Test response for `POST /users` with id: \"ripley\"."""
+	test_client = TestClient(app)
+	response = test_client.post("/users", json={"id": "ripley"})
+	assert response.status_code == 422

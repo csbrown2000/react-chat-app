@@ -89,3 +89,16 @@ def test_get_users_by_chat_id():
 
 	assert meta["count"] == len(users)
 	assert users == sorted(users, key=lambda user: user["id"])
+
+def test_update_terminators_chat_name():
+	f"""Test update response for `PUT /chats/` name: \"updated chat name\" """
+	test_client = TestClient(app)
+	terminators_id = "660c7a6bc1324e4488cafabc59529c93"
+	updated_name = "updated terminators chat name"
+	expected_response = {"name": updated_name}
+	response = test_client.put(f"/chats/{terminators_id}", json={"name": updated_name})
+	assert response.status_code == 200
+	data = response.json()
+	assert "chat" in data
+	chat = data["chat"]
+	assert chat["name"] == expected_response

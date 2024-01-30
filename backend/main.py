@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 # Router imports
 from backend.routers.chats import chats_router
 from backend.routers.users import users_router
-from backend.models.exception import EntityNotFoundException
+from backend.models.exception import EntityNotFoundException, DuplicateEntityException
 
 app = FastAPI(
 	title="Pony Express API",
@@ -26,6 +26,22 @@ def handle_entity_not_found(
         content={
             "detail": {
                 "type": "entity_not_found",
+                "entity_name": exception.entity_name,
+                "entity_id": exception.entity_id,
+            },
+        },
+    )
+
+@app.exception_handler(DuplicateEntityException)
+def handle_duplicate_entity(
+    _request: Request,
+    exception: DuplicateEntityException,
+) -> JSONResponse:
+    return JSONResponse(
+        status_code=422,
+        content={
+            "detail": {
+                "type": "duplicate_entity",
                 "entity_name": exception.entity_name,
                 "entity_id": exception.entity_id,
             },
