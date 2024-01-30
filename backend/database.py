@@ -150,7 +150,7 @@ def update_chat(chat_id: str, chat_update: ChatUpdate) -> Chat:
 		Chat: The updated chat object.
 	"""
 	chat = get_chat_by_id(chat_id)
-	setattr(chat, "name", chat_update)
+	setattr(chat, "name", chat_update.name)
 	return chat
 
 def delete_chat(chat_id: str):

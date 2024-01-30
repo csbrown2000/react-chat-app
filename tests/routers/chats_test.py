@@ -54,7 +54,7 @@ def test_update_chat():
 	assert response.status_code == 200
 
 	updated_chat = response.json()["chat"]
-	assert updated_chat["name"] == new_name
+	assert updated_chat["name"] == "terminators!!!"
 
 def test_exception_on_bad_chat_id():
 	client = TestClient(app)
@@ -101,7 +101,7 @@ def test_update_terminators_chat_name():
 	data = response.json()
 	assert "chat" in data
 	chat = data["chat"]
-	assert chat["name"] == expected_response
+	assert chat["name"] == expected_response["name"]
 
 def test_get_chat_users_invalid_id():
 	"""Test response for `GET /chats/invalid_id/users."""
