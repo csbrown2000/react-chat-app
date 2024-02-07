@@ -12,6 +12,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Chats/>} />
           <Route path="/chats" element={<Chats/>} />
+          <Route path="/chats/:chatId" element={<Chats/>} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
