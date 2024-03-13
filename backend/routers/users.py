@@ -59,9 +59,6 @@ def get_user_by_id(user_id: str, session: Session = Depends(db.get_session)):
 	return UserResponse(user=db.get_user_by_id(session, user_id))
 
 
-@users_router.post("",
-				   response_model=UserResponse,
-				   description="Create a new user.")
 def create_user(user_create: UserCreate, session: Session = Depends(db.get_session)):
 	"""
 	Create a new user.
@@ -78,7 +75,7 @@ def create_user(user_create: UserCreate, session: Session = Depends(db.get_sessi
 @users_router.get("/{user_id}/chats",
 				  response_model=ChatCollection,
 				  description="Retrieve the chats for a specific user.")
-def get_user_chats(user_id: str, 
+def get_user_chats(user_id: int, 
 				   sort: Literal["name", "id", "created_at"] = "name",
 				   session: Session = Depends(db.get_session)):
 	"""

@@ -1,9 +1,11 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
+from sqlmodel import SQLModel
 
 from backend.models.meta import MetaData
+from backend.models.entities import UserInDB
 
-class User(BaseModel):
+class User(SQLModel):
 	"""
 	Represents a user in the system.
 
@@ -12,6 +14,8 @@ class User(BaseModel):
 		created_at (datetime): The timestamp when the user was created.
 	"""
 	id: int
+	username: str
+	email: str
 	created_at: datetime
 
 class UserCollection(BaseModel):

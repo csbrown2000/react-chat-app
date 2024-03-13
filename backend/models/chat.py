@@ -1,9 +1,11 @@
 from pydantic import BaseModel
 from datetime import datetime
+from sqlmodel import SQLModel
 
 from backend.models.meta import MetaData
+from backend.models.user import User
 
-class Chat(BaseModel):
+class Chat(SQLModel):
 	"""
 	Represents a chat room.
 
@@ -16,8 +18,7 @@ class Chat(BaseModel):
 	"""
 	id: int
 	name: str
-	user_ids: list[str]
-	owner_id: str
+	owner: User
 	created_at: datetime
 
 class ChatCollection(BaseModel):
@@ -49,10 +50,11 @@ class ChatUpdate(BaseModel):
 	"""
 	name: str
 
-class Message(BaseModel):
+class Message(SQLModel):
 	id: int
-	user_id: str
 	text: str
+	chat_id: int
+	user: User
 	created_at: datetime
 
 class MessageCollection(BaseModel):

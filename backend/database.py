@@ -50,7 +50,6 @@ def get_all_users(session: Session) -> list[UserInDB]:
 	Returns:
 		list[User]: A list of User objects representing all the users in the database.
 	"""
-	# return [User(**user_data) for user_data in DB["users"].values()]
 	return session.exec(select(UserInDB)).all()
 
 def get_user_by_id(session: Session, user_id: int) -> UserInDB:
@@ -109,7 +108,7 @@ def get_user_chats(session: Session, user_id: int) -> list[ChatInDB]:
 		EntityNotFoundException: If no chats are found for the given user ID.
 	"""
 
-	return session.exec(select(ChatInDB).where(ChatInDB.owner.id == user_id))
+	return session.exec(select(ChatInDB).where(ChatInDB.owner_id == user_id)).all()
 	raise EntityNotFoundException(entity_name="User", entity_id=user_id)
 
 
