@@ -14,7 +14,7 @@ class Chat(BaseModel):
 		owner_id (str): The ID of the chat owner.
 		created_at (datetime): The timestamp when the chat was created.
 	"""
-	id: str
+	id: int
 	name: str
 	user_ids: list[str]
 	owner_id: str
@@ -50,7 +50,7 @@ class ChatUpdate(BaseModel):
 	name: str
 
 class Message(BaseModel):
-	id: str
+	id: int
 	user_id: str
 	text: str
 	created_at: datetime

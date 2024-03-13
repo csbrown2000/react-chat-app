@@ -11,7 +11,7 @@ class User(BaseModel):
 		id (str): The unique identifier for the user.
 		created_at (datetime): The timestamp when the user was created.
 	"""
-	id: str
+	id: int
 	created_at: datetime
 
 class UserCollection(BaseModel):
@@ -32,7 +32,7 @@ class UserCreate(BaseModel):
 	Attributes:
 		id (str): The ID of the user.
 	"""
-	id: str
+	id: int
 
 
 class UserResponse(BaseModel):

@@ -1,6 +1,7 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from typing import Literal
 from backend import database as db
+from sqlmodel import Session
 
 from backend.models.chat import (
 	Chat,
@@ -18,7 +19,8 @@ chats_router = APIRouter(prefix="/chats", tags=["Chats"])
 @chats_router.get("",
 				  response_model=ChatCollection,
 				  description="Retrieve all chats and sort them based on the specified attribute.")
-def get_all_chats(sort: Literal["id", "created_at", "name"] = "name"):
+def get_all_chats(sort: Literal["id", "created_at", "name"] = "name", 
+				  session: Session = Depends(db.get_session)):
 	"""
 	Retrieve all chats and sort them based on the specified attribute.
 
@@ -29,7 +31,7 @@ def get_all_chats(sort: Literal["id", "created_at", "name"] = "name"):
 		ChatCollection: A collection of chats, sorted based on the specified attribute.
 	"""
 	sort_key = lambda chat: getattr(chat, sort)
-	chats = db.get_all_chats()
+	chats = db.get_all_chats(session)
 
 	return ChatCollection(
 		meta={"count": len(chats)},
@@ -40,7 +42,7 @@ def get_all_chats(sort: Literal["id", "created_at", "name"] = "name"):
 @chats_router.get("/{chat_id}",
 				  response_model=ChatResponse,
 				  description="Retrieve a chat by its ID.")
-def get_chat_by_id(chat_id: str):
+def get_chat_by_id(chat_id: str, session: Session = Depends(db.get_session)):
 	"""
 	Retrieve a chat by its ID.
 
@@ -50,12 +52,12 @@ def get_chat_by_id(chat_id: str):
 	Returns:
 	- ChatResponse: The response containing the chat information.
 	"""
-	return ChatResponse(chat=db.get_chat_by_id(chat_id))
+	return ChatResponse(chat=db.get_chat_by_id(session, chat_id))
 
 @chats_router.put("/{chat_id}",
 				  response_model=ChatResponse,
 				  description="Update a chat with the given chat_id.")
-def update_chat(chat_id: str, chat_update: ChatUpdate):
+def update_chat(chat_id: str, chat_update: ChatUpdate, session: Session = Depends(db.get_session)):
 	"""
 	Update a chat with the given chat_id.
 
@@ -66,13 +68,13 @@ def update_chat(chat_id: str, chat_update: ChatUpdate):
 	Returns:
 		ChatResponse: The response containing the updated chat information.
 	"""
-	return ChatResponse(chat=db.update_chat(chat_id, chat_update))
+	return ChatResponse(chat=db.update_chat(session, chat_id, chat_update))
 
 @chats_router.delete("/{chat_id}",
 					 status_code=204,
 					 response_model=None,
 					 description="Deletes a chat with the given chat_id from the database.")
-def delete_chat(chat_id: str):
+def delete_chat(chat_id: str, session: Session = Depends(db.get_session)):
 	"""
 	Deletes a chat with the given chat_id from the database.
 
@@ -83,7 +85,7 @@ def delete_chat(chat_id: str):
 	- None
 
 	"""
-	db.delete_chat(chat_id)
+	db.delete_chat(session, chat_id)
 
 
 @chats_router.get("/{chat_id}/messages",
@@ -91,7 +93,8 @@ def delete_chat(chat_id: str):
 				  description="Get messages by chat ID and sort them based on the specified attribute.")
 def get_messages_by_chat_id(
 		chat_id: str,
-		sort: Literal["id", "created_at", "text", "user_id"] = "created_at"
+		sort: Literal["id", "created_at", "text", "user_id"] = "created_at",
+		session: Session = Depends(db.get_session)
 		):
 	"""
 	Get messages by chat ID and sort them based on the specified attribute.
@@ -105,7 +108,7 @@ def get_messages_by_chat_id(
 
 	"""
 	sort_key = lambda message: getattr(message, sort)
-	messages = db.get_messages_by_id(chat_id)
+	messages = db.get_messages_by_id(session, chat_id)
 	return MessageCollection(
 		meta={"count": len(messages)},
 		messages=sorted(messages, key=sort_key)
@@ -115,7 +118,8 @@ def get_messages_by_chat_id(
 				  response_model=UserCollection,
 				  description="Get the users in a chat.")
 def get_users_in_chat(chat_id: str,
-					  sort: Literal["id", "created_at"] = "id"):
+					  sort: Literal["id", "created_at"] = "id",
+					  session: Session = Depends(db.get_session)):
 	"""
 	Get the users in a chat.
 
@@ -127,7 +131,7 @@ def get_users_in_chat(chat_id: str,
 	- UserCollection: A collection of users in the chat, sorted based on the specified field.
 	"""
 	sort_key = lambda user: getattr(user, sort)
-	users = db.get_users_in_chat(chat_id)
+	users = db.get_users_in_chat(session, chat_id)
 	return UserCollection(
 		meta={"count": len(users)},
 		users=sorted(users, key=sort_key)
