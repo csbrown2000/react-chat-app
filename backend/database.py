@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 from uuid import uuid4
 from sqlmodel import Session, SQLModel, create_engine, select
+from fastapi import HTTPException
 
 from backend.models.entities import (
 	UserInDB,
@@ -9,7 +10,6 @@ from backend.models.entities import (
 	ChatInDB,
 	MessageInDB
 )
-
 from backend.models.exception import EntityNotFoundException, DuplicateEntityException
 from backend.models.user import (
     User,
@@ -188,7 +188,7 @@ def get_messages_by_id(session: Session, chat_id: int) -> list[MessageInDB]:
 		EntityNotFoundException: If the chat ID is not found in the database.
 	"""
 
-	return session.exec(select(MessageInDB).where(MessageInDB.chat_id == chat_id))
+	return session.exec(select(MessageInDB).where(MessageInDB.chat_id == chat_id)).all()
 	raise EntityNotFoundException(entity_name="Chat", entity_id=chat_id)
 
 def get_users_in_chat(session: Session, chat_id: int) -> list[UserInDB]:
@@ -205,5 +205,48 @@ def get_users_in_chat(session: Session, chat_id: int) -> list[UserInDB]:
 		EntityNotFoundException: If the chat with the specified ID does not exist.
 	"""
 
-	return session.exec(select(UserInDB).where(select(ChatInDB.users.id).all())).all()
+	return session.exec(select(ChatInDB.users)).all()
 	raise EntityNotFoundException(entity_name="Chat", entity_id=chat_id)
+
+class AuthException(HTTPException):
+    def __init__(self, error: str, entity_name: str, entity_field: str, entity_value: str):
+        super().__init__(
+            status_code=422,
+            detail={
+                "type": error,
+                "entity_name": entity_name,
+                "entity_field": entity_field,
+                "entity_value": entity_value
+            },
+        )
+
+class DuplicateUsernameException(AuthException):
+    def __init__(self, value:str):
+        super().__init__(
+            error="duplicate_value",
+            entity_name="User",
+			entity_field="Username",
+			entity_value=value
+        )
+
+class DuplicateEmailException(AuthException):
+    def __init__(self, value:str):
+        super().__init__(
+            error="duplicate_value",
+            entity_name="User",
+			entity_field="Email",
+			entity_value=value
+        )
+
+
+def check_credentials_exist(session: Session, user_name: str, user_email: str):
+	username = session.exec(select(UserInDB).where(UserInDB.username == user_name)).first()
+	print("username", username)
+	if username:
+		raise DuplicateUsernameException(value=user_name)
+	else:
+		email = session.exec(select(UserInDB).where(UserInDB.email == user_email)).first()
+		print("email", email)
+		if email:
+			raise DuplicateEmailException(value=user_email)
+		return False

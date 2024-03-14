@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 # Router imports
 from backend.routers.chats import chats_router
 from backend.routers.users import users_router
+from backend.auth import auth_router
 from backend.models.exception import EntityNotFoundException, DuplicateEntityException
 from backend.database import create_db_and_tables
 
@@ -31,6 +32,7 @@ app.add_middleware(
 # Router list
 app.include_router(chats_router)
 app.include_router(users_router)
+app.include_router(auth_router)
 
 # Setup exception stuff
 @app.exception_handler(EntityNotFoundException)
