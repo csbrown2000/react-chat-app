@@ -97,6 +97,17 @@ def _build_access_token(user: UserInDB) -> AccessToken:
         expires_in=access_token_duration,
     )
 
+def get_current_user(
+    session: Session = Depends(db.get_session),
+    token: str = Depends(oauth2_scheme),
+) -> UserInDB:
+    payload = jwt.decode(token, jwt_key, jwt_alg)
+    user_id = payload.get("sub")
+    if user_id is None:
+        raise InvalidCredentials()
+    user = session.get(UserInDB, user_id)
+    if user:
+        return user
 
 def _decode_access_token(session: Session, token: str) -> UserInDB:
     try:

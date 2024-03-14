@@ -47,3 +47,7 @@ class UserResponse(BaseModel):
 		user (User): The user object.
 	"""
 	user: User
+
+class UserUpdate(BaseModel):
+	username: str
+	email: str
