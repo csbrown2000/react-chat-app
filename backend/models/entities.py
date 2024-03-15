@@ -79,7 +79,7 @@ class UserRegistration(SQLModel):
 class Claims(BaseModel):
     """Access token claims (aka payload)."""
 
-    sub: str  # id of user
+    sub: int  # id of user
     exp: int  # unix timestamp
 
 class AuthException(HTTPException):

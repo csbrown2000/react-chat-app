@@ -204,8 +204,9 @@ def get_users_in_chat(session: Session, chat_id: int) -> list[UserInDB]:
 	Raises:
 		EntityNotFoundException: If the chat with the specified ID does not exist.
 	"""
-
-	return session.exec(select(ChatInDB.users)).all()
+	chat = session.get(ChatInDB, chat_id)
+	if chat:
+		return chat.users
 	raise EntityNotFoundException(entity_name="Chat", entity_id=chat_id)
 
 class AuthException(HTTPException):
@@ -225,7 +226,7 @@ class DuplicateUsernameException(AuthException):
         super().__init__(
             error="duplicate_value",
             entity_name="User",
-			entity_field="Username",
+			entity_field="username",
 			entity_value=value
         )
 
@@ -234,7 +235,7 @@ class DuplicateEmailException(AuthException):
         super().__init__(
             error="duplicate_value",
             entity_name="User",
-			entity_field="Email",
+			entity_field="email",
 			entity_value=value
         )
 

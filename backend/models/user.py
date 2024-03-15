@@ -3,7 +3,6 @@ from datetime import datetime
 from sqlmodel import SQLModel
 
 from backend.models.meta import MetaData
-from backend.models.entities import UserInDB
 
 class User(SQLModel):
 	"""

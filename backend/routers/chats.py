@@ -70,22 +70,22 @@ def update_chat(chat_id: str, chat_update: ChatUpdate, session: Session = Depend
 	"""
 	return ChatResponse(chat=db.update_chat(session, chat_id, chat_update))
 
-@chats_router.delete("/{chat_id}",
-					 status_code=204,
-					 response_model=None,
-					 description="Deletes a chat with the given chat_id from the database.")
-def delete_chat(chat_id: str, session: Session = Depends(db.get_session)):
-	"""
-	Deletes a chat with the given chat_id from the database.
+# @chats_router.delete("/{chat_id}",
+# 					 status_code=204,
+# 					 response_model=None,
+# 					 description="Deletes a chat with the given chat_id from the database.")
+# def delete_chat(chat_id: str, session: Session = Depends(db.get_session)):
+# 	"""
+# 	Deletes a chat with the given chat_id from the database.
 
-	Parameters:
-	- chat_id (str): The ID of the chat to be deleted.
+# 	Parameters:
+# 	- chat_id (str): The ID of the chat to be deleted.
 
-	Returns:
-	- None
+# 	Returns:
+# 	- None
 
-	"""
-	db.delete_chat(session, chat_id)
+# 	"""
+# 	db.delete_chat(session, chat_id)
 
 
 @chats_router.get("/{chat_id}/messages",

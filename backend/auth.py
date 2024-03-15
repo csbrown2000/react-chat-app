@@ -27,7 +27,7 @@ from passlib.context import CryptContext
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 access_token_duration = 3600  # seconds
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
-jwt_key = os.environ.get("JWT_KEY", default="insecure-jwt-key-for-dev")
+jwt_key = str(os.environ.get("JWT_KEY", default="any string you want for a dev JWT key"))
 jwt_alg = "HS256"
 
 auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -88,7 +88,7 @@ def _get_authenticated_user(
 
 def _build_access_token(user: UserInDB) -> AccessToken:
     expiration = int(datetime.now(timezone.utc).timestamp()) + access_token_duration
-    claims = Claims(sub=str(user.id), exp=expiration)
+    claims = Claims(sub=int(user.id), exp=expiration)
     access_token = jwt.encode(claims.model_dump(), key=jwt_key, algorithm=jwt_alg)
 
     return AccessToken(
@@ -101,20 +101,23 @@ def get_current_user(
     session: Session = Depends(db.get_session),
     token: str = Depends(oauth2_scheme),
 ) -> UserInDB:
-    payload = jwt.decode(token, jwt_key, jwt_alg)
-    user_id = payload.get("sub")
-    if user_id is None:
-        raise InvalidCredentials()
-    user = session.get(UserInDB, user_id)
-    if user:
-        return user
-
+    print("in get current user")
+    user = _decode_access_token(session, token)
+    return user
+    
 def _decode_access_token(session: Session, token: str) -> UserInDB:
     try:
-        claims_dict = jwt.decode(token, key=jwt_key, algorithms=[jwt_alg])
+        print("key", jwt_key)
+        print("alg", jwt_alg)
+        print("token", token)
+        claims_dict = jwt.decode(token, key=jwt_key, algorithms=jwt_alg)
+        print(claims_dict)
         claims = Claims(**claims_dict)
+        print(claims)
         user_id = claims.sub
+        print(user_id)
         user = session.get(UserInDB, user_id)
+        print(user)
 
         if user is None:
             raise InvalidToken()
@@ -123,6 +126,7 @@ def _decode_access_token(session: Session, token: str) -> UserInDB:
     except ExpiredSignatureError:
         raise ExpiredToken()
     except JWTError:
+        print("jwt error")
         raise InvalidToken()
     except ValidationError():
         raise InvalidToken()

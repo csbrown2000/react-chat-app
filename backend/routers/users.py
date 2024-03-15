@@ -42,11 +42,17 @@ def get_users(
 		users=sorted(users, key=sort_key)
 	)
 
+@users_router.get("/me",
+				  response_model=UserResponse,
+				  description="Retrieves the current user.")
+def get_curr_user(user: UserInDB = Depends(get_current_user)):
+	return UserResponse(user=user)
+
 
 @users_router.get("/{user_id}",
 				  response_model=UserResponse,
 				  description="Retrieve a user by their ID.")
-def get_user_by_id(user_id: str, session: Session = Depends(db.get_session)):
+def get_user_by_id(user_id: int, session: Session = Depends(db.get_session)):
 	"""
 	Retrieve a user by their ID.
 
@@ -95,12 +101,8 @@ def get_user_chats(user_id: int,
 		chats=sorted(chats, key=sort_key)
 	)
 
-@users_router.get("/me",
-				  response_model=UserResponse,
-				  description="Retrieves the current user.")
-def get_curr_user(user: UserInDB = Depends(get_current_user), 
-				  session: Session = Depends(db.get_session)):
-	return UserResponse(user)
+
+
 
 @users_router.put("/me",
 				  response_model=UserResponse,
