@@ -14,7 +14,7 @@ from backend.models.entities import (
     ExpiredToken,
     Claims
 )
-from backend.models.user import User
+from backend.models.user import UserResponse
 from backend import database as db
 
 from fastapi.security import (
@@ -43,7 +43,7 @@ auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
 # ******************************
     
 @auth_router.post("/registration",
-                  response_model=User,
+                  response_model=UserResponse,
                   status_code=201)
 def register_new_user(
     registration: UserRegistration,
@@ -90,7 +90,7 @@ def _get_authenticated_user(
 
 def _build_access_token(user: UserInDB) -> AccessToken:
     expiration = int(datetime.now(timezone.utc).timestamp()) + access_token_duration
-    claims = Claims(sub=user.id, exp=expiration)
+    claims = Claims(sub=str(user.id), exp=expiration)
     access_token = jwt.encode(claims.model_dump(), key=jwt_key, algorithm=jwt_alg)
 
     return AccessToken(
