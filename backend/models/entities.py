@@ -79,7 +79,7 @@ class UserRegistration(SQLModel):
 class Claims(BaseModel):
     """Access token claims (aka payload)."""
 
-    sub: int  # id of user
+    sub: str  # id of user
     exp: int  # unix timestamp
 
 class AuthException(HTTPException):
@@ -105,7 +105,7 @@ class InvalidToken(AuthException):
     def __init__(self):
         super().__init__(
             error="invalid_client",
-            description="invalid bearer token",
+            description="invalid access token",
         )
 
 
@@ -113,5 +113,5 @@ class ExpiredToken(AuthException):
     def __init__(self):
         super().__init__(
             error="invalid_client",
-            description="expired bearer token",
+            description="expired access token",
         )
