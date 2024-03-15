@@ -42,12 +42,14 @@ auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
 #			ROUTES
 # ******************************
     
-@auth_router.post("/registration", response_model=User)
+@auth_router.post("/registration",
+                  response_model=User,
+                  status_code=201)
 def register_new_user(
     registration: UserRegistration,
     session: Annotated[Session, Depends(db.get_session)]):
     """Register new user."""
-    if not db.check_credentials_exist(session, registration.username, registration.email):
+    if db.check_credentials_exist(session, registration.username, registration.email) == False:
             hashed_password = pwd_context.hash(registration.password)
             user = UserInDB(
 				**registration.model_dump(),
@@ -88,7 +90,7 @@ def _get_authenticated_user(
 
 def _build_access_token(user: UserInDB) -> AccessToken:
     expiration = int(datetime.now(timezone.utc).timestamp()) + access_token_duration
-    claims = Claims(sub=int(user.id), exp=expiration)
+    claims = Claims(sub=user.id, exp=expiration)
     access_token = jwt.encode(claims.model_dump(), key=jwt_key, algorithm=jwt_alg)
 
     return AccessToken(
