@@ -109,8 +109,9 @@ def get_user_chats(session: Session, user_id: int) -> list[ChatInDB]:
 	Raises:
 		EntityNotFoundException: If no chats are found for the given user ID.
 	"""
-
-	return session.exec(select(ChatInDB).where(ChatInDB.owner_id == user_id)).all()
+	user = session.get(UserInDB, user_id)
+	if user:
+		return user.chats
 	raise EntityNotFoundException(entity_name="User", entity_id=user_id)
 
 

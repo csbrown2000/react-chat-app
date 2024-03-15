@@ -48,6 +48,19 @@ def get_users(
 def get_curr_user(user: UserInDB = Depends(get_current_user)):
 	return UserResponse(user=user)
 
+@users_router.put("/me",
+				  response_model=UserResponse,
+				  description="Retrieves the current user.")
+def update_curr_user(user_update: UserUpdate,
+					user: UserInDB = Depends(get_current_user), 
+				  session: Session = Depends(db.get_session)):
+	user = db.get_user_by_id(session, user.id)
+	for attr, value in user_update.model_dump(exclude_unset=True).items():
+		setattr(user, attr, value)
+	session.add(user)
+	session.commit()
+	session.refresh(user)
+	return user
 
 @users_router.get("/{user_id}",
 				  response_model=UserResponse,
@@ -100,20 +113,3 @@ def get_user_chats(user_id: int,
 		meta={"count": len(chats)},
 		chats=sorted(chats, key=sort_key)
 	)
-
-
-
-
-@users_router.put("/me",
-				  response_model=UserResponse,
-				  description="Retrieves the current user.")
-def update_curr_user(user_update: UserUpdate,
-					user: UserInDB = Depends(get_current_user), 
-				  session: Session = Depends(db.get_session)):
-	user = db.get_user_by_id(session, user.id)
-	for attr, value in user_update.model_dump(exclude_unset=True).items():
-		setattr(user, attr, value)
-	session.add(user)
-	session.commit()
-	session.refresh(user)
-	return user

@@ -44,6 +44,7 @@ def get_all_chats(sort: Literal["id", "created_at", "name"] = "name",
 
 @chats_router.get("/{chat_id}",
 				  response_model=ChatResponse,
+				  response_model_exclude_none=True,
 				  description="Retrieve a chat by its ID.")
 def get_chat_by_id(chat_id: str,
 				   session: Session = Depends(db.get_session),
