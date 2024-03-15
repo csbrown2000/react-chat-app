@@ -8,6 +8,7 @@ from backend.models.chat import (
 	ChatCollection,
 	ChatResponse,
 	ChatUpdate,
+	UpdateChatResponse,
 	Message,
 	MessageCollection,
 	MessageResponse,
@@ -77,7 +78,7 @@ def get_chat_by_id(chat_id: str,
 
 
 @chats_router.put("/{chat_id}",
-				  response_model=ChatResponse,
+				  response_model=UpdateChatResponse,
 				  description="Update a chat with the given chat_id.")
 def update_chat(chat_id: str, chat_update: ChatUpdate, session: Session = Depends(db.get_session)):
 	"""
@@ -90,7 +91,7 @@ def update_chat(chat_id: str, chat_update: ChatUpdate, session: Session = Depend
 	Returns:
 		ChatResponse: The response containing the updated chat information.
 	"""
-	return ChatResponse(chat=db.update_chat(session, chat_id, chat_update))
+	return UpdateChatResponse(chat=db.update_chat(session, chat_id, chat_update))
 
 # @chats_router.delete("/{chat_id}",
 # 					 status_code=204,

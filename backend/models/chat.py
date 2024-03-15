@@ -68,6 +68,9 @@ class ChatResponse(BaseModel):
 	messages: Optional[list[Message]] = Field(default=None)
 	users: Optional[list[User]] = Field(default=None)
 
+class UpdateChatResponse(BaseModel):
+	chat: Chat
+
 class ChatUpdate(BaseModel):
 	"""
 	Represents an update for a chat.
