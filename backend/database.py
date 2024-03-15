@@ -22,7 +22,9 @@ from backend.models.chat import(
     ChatResponse,
     ChatUpdate,
 	Message,
-	MessageCollection
+	MessageCollection,
+	MessageCreate,
+	MessageResponse
 )
 
 engine = create_engine(
@@ -84,14 +86,14 @@ def create_user(session: Session, user_create: UserCreate) -> UserInDB:
 	Raises:
 		DuplicateEntityException: If a user with the same ID already exists in the database.
 	"""
-
-	user = UserInDB(**user_create.model_dump())
-	session.add(user)
-	session.commit()
-	session.refresh(user)
-	return user
-
-	raise DuplicateEntityException(entity_name="User", entity_id=user_create.id)
+	try:
+		user = UserInDB(**user_create.model_dump())
+		session.add(user)
+		session.commit()
+		session.refresh(user)
+		return user
+	except:
+		raise DuplicateEntityException(entity_name="User", entity_id=user_create.id)
 	
 
 def get_user_chats(session: Session, user_id: int) -> list[ChatInDB]:
@@ -136,7 +138,9 @@ def get_chat_by_id(session: Session, chat_id: int) -> ChatInDB:
 		EntityNotFoundException: If the chat with the given ID does not exist.
 	"""
 
-	return session.get(ChatInDB, chat_id)
+	chat = session.get(ChatInDB, chat_id)
+	if chat:
+		return chat
 	raise EntityNotFoundException(entity_name="Chat", entity_id=chat_id)
 
 def update_chat(session: Session, chat_id: int, chat_update: ChatUpdate) -> ChatInDB:
@@ -208,6 +212,18 @@ def get_users_in_chat(session: Session, chat_id: int) -> list[UserInDB]:
 	if chat:
 		return chat.users
 	raise EntityNotFoundException(entity_name="Chat", entity_id=chat_id)
+
+def create_new_message(session: Session, message_create: MessageCreate, user: UserInDB, chat_id: int) -> MessageResponse:
+	try:
+		message = MessageInDB(text=message_create.text,
+						user_id=user.id,
+						chat_id=chat_id)
+		session.add(message)
+		session.commit()
+		session.refresh(message)
+		return message
+	except:
+		pass
 
 class AuthException(HTTPException):
     def __init__(self, error: str, entity_name: str, entity_field: str, entity_value: str):

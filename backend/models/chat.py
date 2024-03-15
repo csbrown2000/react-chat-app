@@ -1,9 +1,10 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
 from sqlmodel import SQLModel
+from typing import Optional
 
-from backend.models.meta import MetaData
-from backend.models.user import User
+from backend.models.meta import MetaData, ChatMetaData
+from backend.models.user import User, UserList
 
 class Chat(SQLModel):
 	"""
@@ -31,25 +32,6 @@ class ChatCollection(BaseModel):
 	"""
 	meta: MetaData
 	chats: list[Chat]
-
-class ChatResponse(BaseModel):
-	"""
-	Represents a chat response object.
-
-	Attributes:
-		chat (Chat): The chat object associated with the response.
-	"""
-	chat: Chat
-
-class ChatUpdate(BaseModel):
-	"""
-	Represents an update for a chat.
-
-	Attributes:
-		name (str): The updated name of the chat.
-	"""
-	name: str
-
 class Message(SQLModel):
 	id: int
 	text: str
@@ -60,3 +42,37 @@ class Message(SQLModel):
 class MessageCollection(BaseModel):
 	meta: MetaData
 	messages: list[Message]
+
+class MessageList(BaseModel):
+	messages: list[Message]
+
+class MessageCreate(BaseModel):
+	text: str
+
+class MessageResponse(SQLModel):
+	id: int
+	text: str
+	chat_id: int
+	user: User
+	created_at: datetime
+
+class ChatResponse(BaseModel):
+	"""
+	Represents a chat response object.
+
+	Attributes:
+		chat (Chat): The chat object associated with the response.
+	"""
+	meta: ChatMetaData
+	chat: Chat
+	messages: Optional[list[Message]] = Field(default=None)
+	users: Optional[list[User]] = Field(default=None)
+
+class ChatUpdate(BaseModel):
+	"""
+	Represents an update for a chat.
+
+	Attributes:
+		name (str): The updated name of the chat.
+	"""
+	name: str

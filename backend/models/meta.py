@@ -10,3 +10,6 @@ class MetaData(BaseModel):
 	"""
 	count: int
 
+class ChatMetaData(BaseModel):
+	message_count: int
+	user_count: int

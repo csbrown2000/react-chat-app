@@ -28,6 +28,9 @@ class UserCollection(BaseModel):
 	meta: MetaData
 	users: list[User]
 
+class UserList(BaseModel):
+	users: list[User]
+
 class UserCreate(BaseModel):
 	"""
 	Represents a user creation model.

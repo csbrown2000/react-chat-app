@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from typing import Literal
 from backend import database as db
 from sqlmodel import Session
@@ -9,9 +9,12 @@ from backend.models.chat import (
 	ChatResponse,
 	ChatUpdate,
 	Message,
-	MessageCollection
+	MessageCollection,
+	MessageResponse,
+	MessageCreate
 )
-
+from backend.auth import get_current_user
+from backend.models.entities import UserInDB
 from backend.models.user import UserCollection
 
 chats_router = APIRouter(prefix="/chats", tags=["Chats"])
@@ -42,7 +45,9 @@ def get_all_chats(sort: Literal["id", "created_at", "name"] = "name",
 @chats_router.get("/{chat_id}",
 				  response_model=ChatResponse,
 				  description="Retrieve a chat by its ID.")
-def get_chat_by_id(chat_id: str, session: Session = Depends(db.get_session)):
+def get_chat_by_id(chat_id: str,
+				   session: Session = Depends(db.get_session),
+				   include: list[str] = Query(None)):
 	"""
 	Retrieve a chat by its ID.
 
@@ -52,7 +57,23 @@ def get_chat_by_id(chat_id: str, session: Session = Depends(db.get_session)):
 	Returns:
 	- ChatResponse: The response containing the chat information.
 	"""
-	return ChatResponse(chat=db.get_chat_by_id(session, chat_id))
+	chat = db.get_chat_by_id(session, chat_id)
+	if include == None:
+		return ChatResponse(meta={"message_count": len(chat.messages),
+							"user_count": len(chat.users)},
+						chat=chat
+						)
+	else:
+		return ChatResponse(
+			meta={
+				"message_count": len(chat.messages),
+				"user_count": len(chat.users)
+				},
+			chat=chat,
+			messages = chat.messages if "messages" in include else None,
+			users = chat.users if "users" in include else None
+		)
+
 
 @chats_router.put("/{chat_id}",
 				  response_model=ChatResponse,
@@ -137,3 +158,12 @@ def get_users_in_chat(chat_id: str,
 		users=sorted(users, key=sort_key)
 	)
 
+@chats_router.post("/{chat_id}/messages",
+				   response_model=MessageResponse,
+				   status_code=201
+				   )
+def create_message(chat_id: int,
+					message_create: MessageCreate,
+					user: UserInDB = Depends(get_current_user), 
+					session: Session = Depends(db.get_session)):
+	return db.create_new_message(session, message_create, user, chat_id)
