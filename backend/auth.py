@@ -58,7 +58,7 @@ def register_new_user(
             session.add(user)
             session.commit()
             session.refresh(user)
-            return user
+            return UserResponse(user=user)
 
 @auth_router.post("/token", response_model=AccessToken)
 def get_access_token(

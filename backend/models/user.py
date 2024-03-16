@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
 from sqlmodel import SQLModel
+from typing import Optional
 
 from backend.models.meta import MetaData
 
@@ -51,5 +52,5 @@ class UserResponse(BaseModel):
 	user: User
 
 class UserUpdate(BaseModel):
-	username: str
-	email: str
+	username: Optional[str] = Field(default=None)
+	email: Optional[str] = Field(default=None)
