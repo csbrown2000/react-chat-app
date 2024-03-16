@@ -222,7 +222,7 @@ def create_new_message(session: Session, message_create: MessageCreate, user: Us
 		session.add(message)
 		session.commit()
 		session.refresh(message)
-		return message
+		return MessageResponse(message=message)
 	except:
 		pass
 
