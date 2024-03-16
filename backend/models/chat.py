@@ -49,12 +49,8 @@ class MessageList(BaseModel):
 class MessageCreate(BaseModel):
 	text: str
 
-class MessageResponse(SQLModel):
-	id: int
-	text: str
-	chat_id: int
-	user: User
-	created_at: datetime
+class MessageResponse(BaseModel):
+	message: Message
 
 class ChatResponse(BaseModel):
 	"""

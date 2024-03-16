@@ -60,7 +60,7 @@ def update_curr_user(user_update: UserUpdate,
 	session.add(user)
 	session.commit()
 	session.refresh(user)
-	return user
+	return UserResponse(user=user)
 
 @users_router.get("/{user_id}",
 				  response_model=UserResponse,
