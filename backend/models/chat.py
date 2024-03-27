@@ -32,6 +32,7 @@ class ChatCollection(BaseModel):
 	"""
 	meta: MetaData
 	chats: list[Chat]
+	
 class Message(SQLModel):
 	id: int
 	text: str

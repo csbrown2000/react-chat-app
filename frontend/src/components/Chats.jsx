@@ -72,7 +72,6 @@ function ChatListContainer({}) {
 			</div>
 		)
 	}
-
 }
 
 function ChatCardQueryContainer({ chatId }) {
@@ -105,7 +104,6 @@ function ChatCardContainer({ messages }){
 }
 
 function MessageList({ messages }){
-
 	return (
 		<div className="message-list">
 			{messages.map((msg) => (
