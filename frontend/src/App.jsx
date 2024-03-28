@@ -7,6 +7,7 @@ import { UserProvider } from './context/user';
 import TopNav from './components/TopNav';
 import Login from './components/Login';
 import Registration from './components/Registration';
+import Profile from './components/Profile';
 
 const queryClient = new QueryClient();
 
@@ -16,7 +17,7 @@ function AuthenticatedRoutes(){
 			<Route path="/" element={<Chats/>} />
 			<Route path="/chats" element={<Chats/>} />
 			<Route path="/chats/:chatId" element={<Chats/>} />
-			<Route path="/profile" />
+			<Route path="/profile" element={<Profile/>} />
 		</Routes>
 	)
 }
@@ -24,7 +25,7 @@ function AuthenticatedRoutes(){
 function UnauthenticatedRoutes() {
 	return (
 	  <Routes>
-		<Route path="/" element={<Home/>} />
+		<Route path="/" element={<Chats/>} />
 		<Route path="/login" element={<Login/>} />
 		<Route path="/register" element={<Registration/>} />
 		<Route path="*" element={<Navigate to="/login" />} />

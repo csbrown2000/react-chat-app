@@ -14,17 +14,11 @@ function Chats({}){
 }
 
 function ChatListItem({ chat }){
-	const [users, setUsers] = useState();
 	const [date, setDate] = useState();
 
 	useEffect(() => {
-		getUsers();
 		formatDate();
 	}), [];
-
-	const getUsers = () => {
-		setUsers(chat.user_ids.join(", "));
-	}
 
 	const formatDate = () => {
 		setDate(new Date(chat.created_at).toDateString());
@@ -34,9 +28,6 @@ function ChatListItem({ chat }){
 		<Link key={chat.id} to={`/chats/${chat.id}`} className="chat-list-item">
 			<div className="chat-item-name">
 				{chat.name}
-			</div>
-			<div className="chat-item-users">
-				{users}
 			</div>
 			<div className="chat-item-date">
 				<p>Created at: {date}</p>
