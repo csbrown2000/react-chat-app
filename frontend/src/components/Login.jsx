@@ -20,7 +20,7 @@ function FormInput({label, type, setter}){
 
 function CreateAccountOptions(){
 	return(
-		<div className="flex flex-row gap-5">
+		<div className="flex flex-grow flex-row gap-5">
 			<p className="text-white">Don't have an account?</p>
 			<NavLink to="/register" className="text-yellow-400">
 				Create an account
@@ -84,7 +84,7 @@ function LoginForm(){
 function Login(){
 
 	return (
-		<div className="flex grow flex-col justify-center items-center px-5 py-5 gap-5">
+		<div className="flex grow flex-col justify-center items-center p-5 gap-5">
 			<LoginForm/>
 			<CreateAccountOptions/>
 		</div>

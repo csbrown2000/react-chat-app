@@ -1,6 +1,7 @@
 import {useState, useEffect } from 'react';
 import { useQuery } from "react-query";
 import { Link, useParams } from "react-router-dom";
+import ScrollContainer from './ScrollContainer';
 import "./Chats.css";
 
 function Chats({}){
@@ -57,9 +58,11 @@ function ChatListContainer({}) {
 
 	if (data?.chats) {
 		return (
-			<div className="chat-list-container">
-				<h2>All Chats</h2>
-				<ChatList chats={data.chats} /> 
+			<div className='py-5'>
+				<h2 className='text-lg text-center'>All Chats</h2>
+				<div className="chat-list-container py-5 px-2 gap-5 my-5 rounded border-2 h-fit">
+					<ChatList chats={data.chats} /> 
+				</div>
 			</div>
 		)
 	}
@@ -67,7 +70,13 @@ function ChatListContainer({}) {
 
 function ChatCardQueryContainer({ chatId }) {
 	if (!chatId) {
-		return <h2>Select a chat</h2>;
+		return (
+			<div className='flex flex-col w-1/2 items-center justify-start border-2 border-purple-300 rounded-md my-16'>
+				<h2 className='p-10 text-xl'>
+					Select a chat
+				</h2>
+			</div>
+		);
 	}
 
 	const { data } = useQuery({
@@ -87,8 +96,8 @@ function ChatCardQueryContainer({ chatId }) {
   
 function ChatCardContainer({ messages }){
 	return (
-		<div className="chat-card-container">
-			<h2>Messages</h2>
+		<div className="chat-card-container gap-5 py-5">
+			<h2 className='text-lg' >Messages</h2>
 			<MessageList messages={messages} />
 		</div>
 	)
@@ -96,11 +105,13 @@ function ChatCardContainer({ messages }){
 
 function MessageList({ messages }){
 	return (
-		<div className="message-list">
-			{messages.map((msg) => (
-				<MessageListItem message={msg}/>
-			))}
-		</div>
+		<ScrollContainer>
+			<div className="message-list">
+				{messages.map((msg, id) => (
+					<MessageListItem key={id++} message={msg}/>
+					))}
+			</div>
+		</ScrollContainer>
 	)
 }
 
@@ -131,7 +142,7 @@ function MessageListItem({ message }){
 			<div className="message-content">
 				{message.text}
 			</div>
-		</div>
+		</div>	
 	)
 }
 

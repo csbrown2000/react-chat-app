@@ -37,7 +37,7 @@ function Main() {
 	const { isLoggedIn } = useAuth();
 
 	return (
-		<main className="max-h-main">
+		<main className="max-h-screen">
 		{isLoggedIn ?
 			<AuthenticatedRoutes /> :
 			<UnauthenticatedRoutes />
@@ -60,9 +60,8 @@ function Home() {
 
 function App() {
 	const className = [
-		"h-screen w-screen",
-		"max-w-full mx-auto",
-		"min-w-full",
+		"h-screen max-h-screen",
+		"w-screen mx-auto",
 		"bg-gray-700 text-white",
 		"flex flex-col",
 	  ].join(" ");
