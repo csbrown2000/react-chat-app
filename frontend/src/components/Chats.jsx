@@ -1,7 +1,9 @@
 import {useState, useEffect } from 'react';
+import { useMutation, useQueryClient } from 'react-query';
 import { useQuery } from "react-query";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import ScrollContainer from './ScrollContainer';
+import { useAuth } from '../context/auth';
 import "./Chats.css";
 
 function Chats({}){
@@ -9,7 +11,7 @@ function Chats({}){
 	return (
 		<div className="chats-page" >
 			<ChatListContainer />
-			<ChatCardQueryContainer chatId={chatId}/>	
+			<ChatCardQueryContainer chatId={chatId}/>
 		</div>
 	)
 }
@@ -88,17 +90,20 @@ function ChatCardQueryContainer({ chatId }) {
 	});
 
 	if (data && data.messages) {
-		return <ChatCardContainer messages={data.messages} />
+		return <ChatCardContainer messages={data.messages} chatId={chatId} />
 	}
 
 	return <h2>loading...</h2>
 }
   
-function ChatCardContainer({ messages }){
+function ChatCardContainer({ messages, chatId }){
 	return (
-		<div className="chat-card-container gap-5 py-5">
+		<div className="flex flex-col flex-grow chat-card-container py-5 max-w-screen-sm">
 			<h2 className='text-lg' >Messages</h2>
 			<MessageList messages={messages} />
+			<div className='flex flex-row justify-center items-center flex-grow w-full border-2 rounded-md border-purple-300 gap-3'>
+				<NewMessageForm chatId={chatId}/>
+			</div>
 		</div>
 	)
 }
@@ -130,10 +135,10 @@ function MessageListItem({ message }){
 	}
 
 	return (
-		<div className="message-list-item">
+		<div className="message-list-item bg-gray-300">
 			<div className="message-header" >
 				<div className="message-owner-id">
-					{message.user_id}
+					{message.user.username}
 				</div>
 				<div className="message-date">
 					{date} - {time}
@@ -143,6 +148,54 @@ function MessageListItem({ message }){
 				{message.text}
 			</div>
 		</div>	
+	)
+}
+
+function NewMessageForm({chatId}) {
+	const [text, setText] = useState("");
+	const { token } = useAuth();
+	const queryClient = useQueryClient();
+	const navigate = useNavigate();
+
+	const mutation = useMutation({
+		mutationFn: () => (
+		  fetch(
+			`http://127.0.0.1:8000/chats/${chatId}/messages`,
+			{
+			  method: "POST",
+			  headers: {
+				"Authorization": "Bearer " + token,
+				"Content-Type": "application/json",
+			  },
+			  body: JSON.stringify({
+				text,
+			  }),
+			},
+		  ).then((response) => response.json())
+		),
+		onSuccess: () => {
+		  queryClient.invalidateQueries({
+			queryKey: ["messages", chatId],
+		  });
+		  setText("")
+		  navigate(`/chats/${chatId}`);
+		},
+	  });
+
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		mutation.mutate();
+	}
+
+	return (
+		<>
+			<form onSubmit={handleSubmit} className='flex flex-grow items-center max-w-full'>
+				<input type="text" placeholder='message' value={text} onChange={(e) => setText(e.target.value)} className='flex w-11/12 bg-gray-300 p-1 m-1 border rounded text-black'/>
+				<button type="submit" className='p-1 mr-2 bg-purple-500 border rounded-lg h-2/3 flex justify-center items-center'>
+					Send
+				</button>
+			</form>
+		</>
 	)
 }
 

@@ -58,7 +58,6 @@
 .message-list-item {
 	display: flex;
 	flex-direction: column;
-	background-color: lightgray;
 	color: black;
 
 	border: 1px solid transparent;
@@ -72,11 +71,12 @@
 	padding-top: 0.5rem;
 	padding-left: 0.5rem;
 	padding-right: 0.5rem;
+	font-size: small;
 }
 
 .message-owner-id {
 	font-weight: bold;
-	font-size: large;
+	font-size: medium;
 }
 
 .message-list {
@@ -91,6 +91,7 @@
 	flex-direction: column;
 	align-items: center;
 	max-width: 50%;
+	max-height: 90vh;
 }
 
 .message-content {

@@ -39,7 +39,7 @@ function ScrollContainer({ children }) {
 
   // add to the classNames below as needed
   return (
-    <div ref={outerRef} className="overflow-scroll relative border-2 border-purple-300 rounded-md">
+    <div ref={outerRef} className="overflow-scroll relative border-l-2 border-r-2 border-t-2 border-purple-300 rounded-md mt-5">
       <div ref={innerRef} className="relative">
         {children}
       </div>
