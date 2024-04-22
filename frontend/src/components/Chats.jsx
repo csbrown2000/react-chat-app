@@ -6,6 +6,8 @@ import ScrollContainer from './ScrollContainer';
 import { useAuth } from '../context/auth';
 import "./Chats.css";
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 function Chats({}){
 	const { chatId } = useParams();
 	return (
@@ -53,7 +55,7 @@ function ChatListContainer({}) {
 	const { data } = useQuery({
 		queryKey: ["chats"],
 		queryFn: () => (
-			fetch("http://localhost:8000/chats")
+			fetch(`${baseUrl}/chats`)
 			.then(response => response.json())
 		),
 	});
@@ -84,7 +86,7 @@ function ChatCardQueryContainer({ chatId }) {
 	const { data } = useQuery({
 		queryKey: ["messages", chatId],
 		queryFn: () => (
-		fetch(`http://127.0.0.1:8000/chats/${chatId}/messages`)
+		fetch(`${baseUrl}/chats/${chatId}/messages`)
 			.then((response) => response.json())
 		),
 	});
@@ -160,7 +162,7 @@ function NewMessageForm({chatId}) {
 	const mutation = useMutation({
 		mutationFn: () => (
 		  fetch(
-			`http://127.0.0.1:8000/chats/${chatId}/messages`,
+			`${baseUrl}/chats/${chatId}/messages`,
 			{
 			  method: "POST",
 			  headers: {

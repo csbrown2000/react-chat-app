@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "./auth";
 
 const UserContext = createContext();
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 function UserProvider({ children }) {
   const { isLoggedIn, logout, token } = useAuth();
@@ -15,7 +16,7 @@ function UserProvider({ children }) {
     staleTime: Infinity,
     queryFn: () => (
       fetch(
-        "http://localhost:8000/users/me",
+        `${baseUrl}/users/me`,
         {
           headers: {
             "Authorization": "Bearer " + token,

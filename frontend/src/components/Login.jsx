@@ -3,6 +3,8 @@ import { useState } from "react"
 import { useAuth } from "../context/auth"
 import FormInput from "./FormInput";
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 function CreateAccountOptions(){
 	return(
 		<div className="flex flex-grow flex-row gap-5">
@@ -30,7 +32,7 @@ function LoginForm(){
 		e.preventDefault();
 
 		fetch(
-			"http://localhost:8000/auth/token",
+			`${baseUrl}/auth/token`,
 			{
 			method: "POST",
 			headers: {

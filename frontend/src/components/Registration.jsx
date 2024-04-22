@@ -3,6 +3,8 @@ import { Link, useNavigate, NavLink} from "react-router-dom";
 import { useAuth } from "../context/auth";
 import FormInput from "./FormInput";
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 function Error({ message }) {
   if (message === "") {
     return <></>;
@@ -39,7 +41,7 @@ function Registration() {
     e.preventDefault();
 
     fetch(
-      "http://127.0.0.1:8000/auth/registration",
+      `${baseUrl}/auth/registration`,
       {
         method: "POST",
         headers: {
