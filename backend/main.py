@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
+from mangum import Mangum
 
 # Router imports
 from backend.routers.chats import chats_router
@@ -21,10 +22,12 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+lambda_handler = Mangum(app)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173",
-                   "https://main.d1zagmzalu4759.amplifyapp.com"],
+                   "https://nn9l8p1ybb.execute-api.us-east-2.amazonaws.com"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
